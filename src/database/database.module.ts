@@ -10,7 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       host: 'localhost',
       port: 3306,
       database: 'shop_db',
-      //   synchronize: true,
+      synchronize: true,
       autoLoadEntities: true,
     }),
   ],
