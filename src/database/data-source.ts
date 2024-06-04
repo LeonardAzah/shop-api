@@ -1,13 +1,13 @@
 import { DataSource } from 'typeorm';
 import { join } from 'path';
+import * as dotenv from 'dotenv';
+import * as dotenvExpand from 'dotenv-expand';
+
+dotenvExpand.expand(dotenv.config());
 
 export default new DataSource({
   type: 'mysql',
-  username: 'root',
-  password: 'lamar',
-  host: 'localhost',
-  port: 3306,
-  database: 'shop_db',
+  url: process.env.DATASOURCE_URL,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [join(__dirname, '/../../', 'database/migrations/**/*{.ts,.js}')],
 

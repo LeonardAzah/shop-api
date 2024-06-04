@@ -3,15 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      username: 'root',
-      password: 'lamar',
-      host: 'localhost',
-      port: 3306,
-      database: 'shop_db',
-      synchronize: true,
-      autoLoadEntities: true,
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'mysql',
+        url: process.env.DATASOURCE_URL,
+        autoLoadEntities: true,
+      }),
     }),
   ],
 })
