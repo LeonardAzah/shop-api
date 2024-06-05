@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateOrders1717600184367 implements MigrationInterface {
-    name = 'CreateOrders1717600184367'
+export class CreateV11717613261346 implements MigrationInterface {
+    name = 'CreateV11717613261346'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -59,6 +59,20 @@ export class CreateOrders1717600184367 implements MigrationInterface {
                 \`customerId\` varchar(36) NULL,
                 \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                 \`updatedAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+                PRIMARY KEY (\`id\`)
+            ) ENGINE = InnoDB
+        `);
+        await queryRunner.query(`
+            CREATE TABLE \`user\` (
+                \`id\` varchar(36) NOT NULL,
+                \`name\` varchar(255) NOT NULL,
+                \`email\` varchar(255) NOT NULL,
+                \`phone\` varchar(255) NOT NULL,
+                \`password\` varchar(255) NOT NULL,
+                \`createdAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+                \`updatedAt\` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+                UNIQUE INDEX \`IDX_e12875dfb3b1d92d7d7c5377e2\` (\`email\`),
+                UNIQUE INDEX \`IDX_8e1f623798118e629b46a9e629\` (\`phone\`),
                 PRIMARY KEY (\`id\`)
             ) ENGINE = InnoDB
         `);
@@ -124,6 +138,15 @@ export class CreateOrders1717600184367 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE \`product_to_category\`
+        `);
+        await queryRunner.query(`
+            DROP INDEX \`IDX_8e1f623798118e629b46a9e629\` ON \`user\`
+        `);
+        await queryRunner.query(`
+            DROP INDEX \`IDX_e12875dfb3b1d92d7d7c5377e2\` ON \`user\`
+        `);
+        await queryRunner.query(`
+            DROP TABLE \`user\`
         `);
         await queryRunner.query(`
             DROP TABLE \`order\`
