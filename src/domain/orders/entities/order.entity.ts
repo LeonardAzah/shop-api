@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -9,6 +10,7 @@ import { RegistryDates } from '../../../common/embedded/registry-dates.embedded'
 import { OrderStatus } from '../enums/order-status.enum';
 import { User } from '../../users/entities/user.entity';
 import { Payment } from '../../payments/entities/payment.entity';
+import { OrderItem } from './order-item.entity';
 
 @Entity()
 export class Order {
@@ -27,4 +29,7 @@ export class Order {
   customer: User;
   @OneToOne(() => Payment, (payment) => payment.order, { cascade: true })
   payment: Payment;
+
+  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
+  items: OrderItem[];
 }
