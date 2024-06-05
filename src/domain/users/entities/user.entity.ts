@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { RegistryDates } from '../../common/embedded/registry-dates.embedded';
-import { Order } from '../../domain/orders/entities/order.entity';
+import { RegistryDates } from '../../../common/embedded/registry-dates.embedded';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
 export class User {

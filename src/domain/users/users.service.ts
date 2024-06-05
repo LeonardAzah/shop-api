@@ -4,10 +4,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { PaginationDto } from '../common/dto/pagination.dto';
+import { PaginationDto } from '../../common/dto/pagination.dto';
 import { skip } from 'node:test';
 import { take } from 'rxjs';
-import { DEFAULT_PAGE_SIZE } from '../common/util/common.constants';
+import { DEFAULT_PAGE_SIZE } from '../../common/util/common.constants';
 
 @Injectable()
 export class UsersService {
