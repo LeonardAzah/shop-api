@@ -6,6 +6,7 @@ export class PaginationDto {
   @IsCardinal()
   limit: number;
 
+  @IsOptional()
   @IsCardinal()
   @IsPositive()
   offset: number;

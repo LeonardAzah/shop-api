@@ -8,15 +8,15 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { IdDto } from '../../common/dto/id.dto';
+import { productsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: productsService) {}
 
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
