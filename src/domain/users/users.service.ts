@@ -12,6 +12,7 @@ import { PaginationDto } from '../../common/dto/pagination.dto';
 import { skip } from 'node:test';
 import { take } from 'rxjs';
 import { DEFAULT_PAGE_SIZE } from '../../common/util/common.constants';
+import { genSalt, hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +20,12 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    const user = await this.usersRepository.create(createUserDto);
+    const { password } = createUserDto;
+    const hashedPassword = await this.hashPassword(password);
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
     return this.usersRepository.save(user);
   }
 
@@ -48,7 +54,14 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.usersRepository.preload({ id, ...updateUserDto });
+    const { password } = updateUserDto;
+    const hashedPassword = password && (await this.hashPassword(password));
+
+    const user = await this.usersRepository.preload({
+      id,
+      ...updateUserDto,
+      password: hashedPassword,
+    });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -82,5 +95,10 @@ export class UsersService {
     }
 
     return this.usersRepository.recover(user);
+  }
+
+  private async hashPassword(password: string) {
+    const salt = await genSalt(12);
+    return hash(password, salt);
   }
 }
