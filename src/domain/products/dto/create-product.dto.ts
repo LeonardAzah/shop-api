@@ -8,11 +8,9 @@ import {
   Length,
   ValidateNested,
 } from 'class-validator';
-import { IsCurrency } from '../../../common/decorators/is-currency.decorator';
+import { IsCurrency } from '../../../common/decorators/validators/is-currency.decorator';
 import { IdDto } from '../../../common/dto/id.dto';
-import { Type } from 'class-transformer';
-import { IsEntity } from '../../../common/decorators/is-entity.decorator';
-
+import { IsEntity } from '../../../common/decorators/validators/is-entity.decorator';
 export class CreateProductDto {
   @Length(2, 50)
   name: string;
