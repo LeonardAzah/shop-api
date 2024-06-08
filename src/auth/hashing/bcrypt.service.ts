@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HashingService } from './hashing.service';
-import { genSalt, hash } from 'bcrypt';
+import { genSalt, hash, compare } from 'bcrypt';
 
 @Injectable()
 export class BcryptService implements HashingService {
@@ -10,6 +10,6 @@ export class BcryptService implements HashingService {
   }
 
   compare(data: string | Buffer, encrypted: string): Promise<boolean> {
-    return this.compare(data, encrypted);
+    return compare(data, encrypted);
   }
 }
