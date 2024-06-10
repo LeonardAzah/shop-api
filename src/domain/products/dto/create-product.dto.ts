@@ -13,16 +13,16 @@ import { IdDto } from '../../../common/dto/id.dto';
 import { IsEntity } from '../../../common/decorators/validators/is-entity.decorator';
 export class CreateProductDto {
   @Length(2, 50)
-  name: string;
+  readonly name: string;
 
   @IsOptional()
   @Length(1, 500)
-  description: string;
+  readonly description?: string;
 
   @IsCurrency()
-  price: number;
+  readonly price: number;
 
   @ArrayNotEmpty()
   @IsEntity()
-  categories: IdDto[];
+  readonly categories: IdDto[];
 }

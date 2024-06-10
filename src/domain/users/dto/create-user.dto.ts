@@ -17,6 +17,15 @@ export class CreateUserDto {
   @IsPhoneNumber('CM')
   phone: string;
 
+  /**
+   * Requires:
+   * 1. 8 to 20 characters
+   * 2. At least one
+   * - Lowercase letter
+   * - Uppercase letter
+   * - Number
+   * - Special character
+   */
   @IsPassword()
   password: string;
 }

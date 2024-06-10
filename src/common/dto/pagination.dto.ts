@@ -4,10 +4,10 @@ import { IsCardinal } from '../decorators/validators/is-cardinal.decorator';
 export class PaginationDto {
   @IsOptional()
   @IsCardinal()
-  limit: number;
+  readonly limit?: number;
 
   @IsOptional()
   @IsCardinal()
   @IsPositive()
-  offset: number;
+  readonly offset?: number;
 }
