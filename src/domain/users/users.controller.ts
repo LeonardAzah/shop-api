@@ -17,6 +17,9 @@ import { RemoveDto } from '../../common/dto/remove.dto';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/roles/enums/roles.enum';
+import { CurrentUser } from '../../auth/decorators/currentUser.decorator';
+import { RequestUser } from '../../auth/interfaces/request-user.interface';
+import { LoginDto } from '../../auth/dtos/login.dto';
 
 @Controller('users')
 export class UsersController {
@@ -32,6 +35,13 @@ export class UsersController {
   findAll(@Query() paginationDto: PaginationDto) {
     return this.usersService.findAll(paginationDto);
   }
+
+  @Public()
+  @Patch('recover')
+  recover(@Body() loginDto: LoginDto) {
+    return this.usersService.recover(loginDto);
+  }
+
   @Roles(Role.MANAGER)
   @Get(':id')
   findOne(@Param() { id }: IdDto) {
@@ -39,17 +49,20 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param() { id }: IdDto, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(
+    @Param() { id }: IdDto,
+    @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.usersService.update(id, updateUserDto, user);
   }
 
   @Delete(':id')
-  remove(@Param() { id }: IdDto, @Query() { soft }: RemoveDto) {
-    return this.usersService.remove(id, soft);
-  }
-
-  @Patch(':id/recover')
-  recover(@Param() { id }: IdDto) {
-    return this.usersService.recover(id);
+  remove(
+    @Param() { id }: IdDto,
+    @Query() { soft }: RemoveDto,
+    @CurrentUser() user: RequestUser,
+  ) {
+    return this.usersService.remove(id, soft, user);
   }
 }

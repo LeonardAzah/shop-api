@@ -1,7 +1,9 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,6 +13,9 @@ import { Repository } from 'typeorm';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { DEFAULT_PAGE_SIZE } from '../../common/util/common.constants';
 import { HashingService } from '../../auth/hashing/hashing.service';
+import { RequestUser } from '../../auth/interfaces/request-user.interface';
+import { compareUserId } from '../../auth/util/authorization.util';
+import { LoginDto } from '../../auth/dtos/login.dto';
 
 @Injectable()
 export class UsersService {
@@ -49,7 +54,12 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    currentUser: RequestUser,
+  ) {
+    compareUserId(currentUser, id);
     const user = await this.usersRepository.preload({
       id,
       ...updateUserDto,
@@ -60,7 +70,12 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async remove(id: string, soft: boolean) {
+  async remove(id: string, soft: boolean, currentUser: RequestUser) {
+    compareUserId(currentUser, id);
+    if (!soft) {
+      throw new ForbiddenException('Forbidden resource');
+    }
+
     const user = await this.findOne(id);
 
     return soft
@@ -68,9 +83,10 @@ export class UsersService {
       : this.usersRepository.remove(user);
   }
 
-  async recover(id: string) {
+  async recover(loginDto: LoginDto) {
+    const { email, password } = loginDto;
     const user = await this.usersRepository.findOne({
-      where: { id },
+      where: { email },
       relations: {
         orders: {
           items: true,
@@ -79,9 +95,17 @@ export class UsersService {
       },
       withDeleted: true,
     });
+
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UnauthorizedException('Invalid credentials');
     }
+
+    const isMatch = await this.hashingService.compare(password, user.password);
+
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
     if (!user.isDeleted) {
       throw new ConflictException('User not deleted');
     }
