@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { RegistryDates } from '../../../common/embedded/registry-dates.embedded';
 import { Order } from '../../orders/entities/order.entity';
 import { Exclude } from 'class-transformer';
+import { Role } from '../../../auth/roles/enums/roles.enum';
 
 @Entity()
 export class User {
@@ -20,6 +21,14 @@ export class User {
   @Exclude()
   @Column()
   password: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    enumName: 'role_enum',
+    default: Role.USER,
+  })
+  role: Role;
 
   @Column(() => RegistryDates, { prefix: false })
   registryDates: RegistryDates;

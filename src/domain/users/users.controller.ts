@@ -14,21 +14,25 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { IdDto } from '../../common/dto/id.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { RemoveDto } from '../../common/dto/remove.dto';
+import { Public } from '../../auth/decorators/public.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/roles/enums/roles.enum';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
+  @Roles(Role.MANAGER)
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.usersService.findAll(paginationDto);
   }
-
+  @Roles(Role.MANAGER)
   @Get(':id')
   findOne(@Param() { id }: IdDto) {
     return this.usersService.findOne(id);
