@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Response } from 'express';
 import { EntityNotFoundError } from 'typeorm';
 import { HttpError } from '../../../common/util/http-error.util';
-import { extactFormText } from '../../../common/util/regex.util';
+import { extractFromText } from '../../../common/util/regex.util';
 
 @Catch(EntityNotFoundError)
 export class NotFoundExceptionFilter implements ExceptionFilter {
@@ -21,7 +21,7 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
   }
 
   private extractMessageData(message: string) {
-    const entityName = extactFormText(message, this.ENTITY_NAME_REGEX);
+    const entityName = extractFromText(message, this.ENTITY_NAME_REGEX);
     return { entityName };
   }
 

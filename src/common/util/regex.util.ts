@@ -1,5 +1,5 @@
-export const extactFormText = (text: string, regex: RegExp) => {
+export const extractFromText = (text: string, regex: RegExp) => {
   const matches = text.match(regex);
-  const lastIndext = matches.length - 1;
-  return matches[lastIndext];
+  const lastIndex = matches.length - 1;
+  return matches[lastIndex];
 };

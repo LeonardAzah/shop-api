@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Query,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -16,7 +18,16 @@ import { productsService } from './products.service';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/roles/enums/roles.enum';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { createParseFilePipe } from '../../files/util/file-validation.util';
+import {
+  MULTIPART_FORMDATA_KEY,
+  MaxFileCount,
+} from '../../files/util/file.constants';
+import { IdFilenameDto } from '../../files/dto/id-filename.dto';
+import { FileSchema } from '../../files/swagger/schemas/file.schema';
+import { FilesSchema } from '../../files/swagger/schemas/files.schema';
 
 @ApiTags('products')
 @Controller('products')
@@ -51,5 +62,31 @@ export class ProductsController {
   @Delete(':id')
   remove(@Param() { id }: IdDto) {
     return this.productsService.remove(id);
+  }
+
+  @ApiConsumes(MULTIPART_FORMDATA_KEY)
+  @ApiBody({ type: FilesSchema })
+  @Roles(Role.MANAGER)
+  @UseInterceptors(FilesInterceptor('files', MaxFileCount.PRODUCT_IMAGES))
+  @Post(':id/images')
+  uploadImages(
+    @Param() { id }: IdDto,
+    @UploadedFiles(createParseFilePipe('2MB', 'png', 'jpeg'))
+    files: Express.Multer.File[],
+  ) {
+    return this.productsService.uploadImages(id, files);
+  }
+
+  @ApiOkResponse({ type: FileSchema })
+  @Public()
+  @Get(':id/images/:filename')
+  downloadImage(@Param() { id, filename }: IdFilenameDto) {
+    return this.productsService.downloadImage(id, filename);
+  }
+
+  @Roles(Role.MANAGER)
+  @Delete(':id/images/:filename')
+  deleteImage(@Param() { id, filename }: IdFilenameDto) {
+    return this.productsService.deleteImage(id, filename);
   }
 }
