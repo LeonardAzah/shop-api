@@ -9,6 +9,8 @@ import { CategoriesModule } from './domain/categories/categories.module';
 import { ProductsModule } from './domain/products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
+import { QueringModule } from './quering/quering.module';
+import { FilteringService } from './quering/filtering.service';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { FilesModule } from './files/files.module';
     ProductsModule,
     AuthModule,
     FilesModule,
+    QueringModule,
   ],
+  providers: [FilteringService],
 })
 export class AppModule {}

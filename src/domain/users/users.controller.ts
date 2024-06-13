@@ -12,7 +12,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IdDto } from '../../common/dto/id.dto';
-import { PaginationDto } from '../../common/dto/pagination.dto';
+import { PaginationDto } from '../../quering/dto/pagination.dto';
 import { RemoveDto } from '../../common/dto/remove.dto';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';

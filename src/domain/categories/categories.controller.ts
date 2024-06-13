@@ -12,7 +12,7 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { IdDto } from '../../common/dto/id.dto';
-import { PaginationDto } from '../../common/dto/pagination.dto';
+import { PaginationDto } from '../../quering/dto/pagination.dto';
 import { Public } from '../../auth/decorators/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
 

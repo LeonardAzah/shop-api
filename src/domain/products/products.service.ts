@@ -3,9 +3,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
-import { PaginationDto } from '../../common/dto/pagination.dto';
-import { DEFAULT_PAGE_SIZE } from '../../common/util/common.constants';
+import { ILike, Repository } from 'typeorm';
+import { PaginationDto } from '../../quering/dto/pagination.dto';
+import { DefaultPageSize } from '../../quering/util/querying.constants';
 import { pathExists } from 'fs-extra';
 import { join } from 'path';
 import {
@@ -14,24 +14,44 @@ import {
   MaxFileCount,
 } from '../../files/util/file.constants';
 import { StorageService } from '../../files/storage/storage.service';
+import { PaginationService } from '../../quering/pagination.service';
+import { ProductsQueryDto } from './dto/quering/products-query.dto';
+import { FilteringService } from '../../quering/filtering.service';
 
 @Injectable()
 export class productsService {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     private readonly storageService: StorageService,
+    private readonly paginationService: PaginationService,
+    private readonly filteringService: FilteringService,
   ) {}
   async create(createProductDto: CreateProductDto) {
     const product = await this.productsRepository.create(createProductDto);
     return this.productsRepository.save(product);
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit, offset } = paginationDto;
-    return this.productsRepository.find({
+  async findAll(productsQueryDto: ProductsQueryDto) {
+    const { page, name, price, categotyId, sort, order } = productsQueryDto;
+    const limit = productsQueryDto.limit ?? DefaultPageSize.PRODUCT;
+    const offset = this.paginationService.calculateOffset(limit, page);
+    const [data, count] = await this.productsRepository.findAndCount({
+      where: {
+        name: this.filteringService.constains(name),
+        price,
+        categories: { id: categotyId },
+      },
+      order: {
+        [sort]: order,
+      },
       skip: offset,
-      take: limit ?? DEFAULT_PAGE_SIZE.PRODUCT,
+      take: limit,
     });
+    const meta = this.paginationService.createMeta(limit, page, count);
+    return {
+      data,
+      meta,
+    };
   }
 
   async findOne(id: string) {

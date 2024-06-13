@@ -6,8 +6,8 @@ import { NotFoundException } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PaginationDto } from '../../common/dto/pagination.dto';
-import { DEFAULT_PAGE_SIZE } from '../../common/util/common.constants';
+import { PaginationDto } from '../../quering/dto/pagination.dto';
+import { DefaultPageSize } from '../../quering/util/querying.constants';
 import { Category } from './entities/category.entity';
 
 @Injectable()
@@ -22,10 +22,10 @@ export class CategoriesService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit, offset } = paginationDto;
+    const { limit, page: offset } = paginationDto;
     return this.categoriesRepository.find({
       skip: offset,
-      take: limit ?? DEFAULT_PAGE_SIZE.CATEGORY,
+      take: limit ?? DefaultPageSize.CATEGORY,
     });
   }
 

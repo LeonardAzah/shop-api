@@ -3,8 +3,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
-import { PaginationDto } from '../../common/dto/pagination.dto';
-import { DEFAULT_PAGE_SIZE } from '../../common/util/common.constants';
+import { PaginationDto } from '../../quering/dto/pagination.dto';
+import { DefaultPageSize } from '../../quering/util/querying.constants';
 import { OrderItemDto } from './dto/order-item.dto';
 import { Product } from '../products/entities/product.entity';
 import { OrderItem } from './entities/order-item.entity';
@@ -32,10 +32,10 @@ export class OrdersService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit, offset } = paginationDto;
+    const { limit, page: offset } = paginationDto;
     return this.ordersRepository.find({
       skip: offset,
-      take: limit ?? DEFAULT_PAGE_SIZE.ORDER,
+      take: limit ?? DefaultPageSize.ORDER,
     });
   }
 

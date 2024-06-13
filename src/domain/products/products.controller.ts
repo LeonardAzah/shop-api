@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { PaginationDto } from '../../common/dto/pagination.dto';
+import { PaginationDto } from '../../quering/dto/pagination.dto';
 import { IdDto } from '../../common/dto/id.dto';
 import { productsService } from './products.service';
 import { Public } from '../../auth/decorators/public.decorator';
@@ -28,6 +28,7 @@ import {
 import { IdFilenameDto } from '../../files/dto/id-filename.dto';
 import { FileSchema } from '../../files/swagger/schemas/file.schema';
 import { FilesSchema } from '../../files/swagger/schemas/files.schema';
+import { ProductsQueryDto } from './dto/quering/products-query.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -42,8 +43,8 @@ export class ProductsController {
 
   @Public()
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.productsService.findAll(paginationDto);
+  findAll(@Query() productsQueryDto: ProductsQueryDto) {
+    return this.productsService.findAll(productsQueryDto);
   }
 
   @Public()
