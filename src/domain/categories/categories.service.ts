@@ -9,24 +9,38 @@ import { Repository } from 'typeorm';
 import { PaginationDto } from '../../quering/dto/pagination.dto';
 import { DefaultPageSize } from '../../quering/util/querying.constants';
 import { Category } from './entities/category.entity';
+import { PaginationService } from '../../quering/pagination.service';
+import { CategoryQueryDto } from './dto/category-query.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
+    private readonly paginationService: PaginationService,
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     const category = await this.categoriesRepository.create(createCategoryDto);
     return this.categoriesRepository.save(category);
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { limit, page: offset } = paginationDto;
-    return this.categoriesRepository.find({
+  async findAll(categoryQueryDto: CategoryQueryDto) {
+    const { page, order, sort } = categoryQueryDto;
+    const limit = categoryQueryDto.limit ?? DefaultPageSize.CATEGORY;
+    const offset = this.paginationService.calculateOffset(limit, page);
+    const [data, count] = await this.categoriesRepository.findAndCount({
+      order: {
+        [sort]: order,
+      },
       skip: offset,
-      take: limit ?? DefaultPageSize.CATEGORY,
+      take: limit,
     });
+
+    const meta = this.paginationService.createMeta(limit, page, count);
+    return {
+      data,
+      meta,
+    };
   }
 
   async findOne(id: string) {

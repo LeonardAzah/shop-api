@@ -16,6 +16,8 @@ import { HashingService } from '../../auth/hashing/hashing.service';
 import { RequestUser } from '../../auth/interfaces/request-user.interface';
 import { compareUserId } from '../../auth/util/authorization.util';
 import { LoginDto } from '../../auth/dtos/login.dto';
+import { CloudinaryService } from '../../cloudinary/CloudinaryService';
+import { PaginationService } from '../../quering/pagination.service';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +25,8 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly hashingService: HashingService,
+    private readonly paginationService: PaginationService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -31,11 +35,19 @@ export class UsersService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit, page: offset } = paginationDto;
-    return this.usersRepository.find({
+    const { page } = paginationDto;
+    const limit = paginationDto.limit ?? DefaultPageSize.USER;
+    const offset = this.paginationService.calculateOffset(limit, page);
+
+    const [data, count] = await this.usersRepository.findAndCount({
       skip: offset,
-      take: limit ?? DefaultPageSize.USER,
+      take: limit,
     });
+    const meta = this.paginationService.createMeta(limit, page, count);
+    return {
+      data,
+      meta,
+    };
   }
 
   async findOne(id: string) {
@@ -107,5 +119,19 @@ export class UsersService {
     }
 
     return this.usersRepository.recover(user);
+  }
+
+  async uploadProfile(id: string, file: Express.Multer.File) {
+    try {
+      const folder = process.env.CLOUDINARY_FOLDER_PROFILES;
+
+      const user = await this.usersRepository.findOneBy({ id });
+      const result = await this.cloudinaryService.uploadFile(file, folder);
+      user.photo = result.secure_url;
+      await this.usersRepository.save(user);
+      return user.photo;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

@@ -8,9 +8,11 @@ import { PaymentsModule } from './domain/payments/payments.module';
 import { CategoriesModule } from './domain/categories/categories.module';
 import { ProductsModule } from './domain/products/products.module';
 import { AuthModule } from './auth/auth.module';
-import { FilesModule } from './files/files.module';
+// import { FilesModule } from './files/files.module';
 import { QueringModule } from './quering/quering.module';
 import { FilteringService } from './quering/filtering.service';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CloudinaryService } from './cloudinary/CloudinaryService';
 
 @Module({
   imports: [
@@ -23,9 +25,10 @@ import { FilteringService } from './quering/filtering.service';
     CategoriesModule,
     ProductsModule,
     AuthModule,
-    FilesModule,
+    // FilesModule,
     QueringModule,
+    CloudinaryModule,
   ],
-  providers: [FilteringService],
+  providers: [FilteringService, CloudinaryService],
 })
 export class AppModule {}

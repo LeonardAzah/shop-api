@@ -1,4 +1,3 @@
-import { StorageService } from '../../../files/storage/storage.service';
 import { BASE_PATH, FilePath } from '../../../files/util/file.constants';
 import { pathExists } from 'fs-extra';
 import { join } from 'path';
@@ -13,7 +12,7 @@ import {
 export class ProductsSubscriber implements EntitySubscriberInterface<Product> {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly storageService: StorageService,
+    // private readonly storageService: StorageService,
   ) {
     dataSource.subscribers.push(this);
   }
@@ -22,19 +21,19 @@ export class ProductsSubscriber implements EntitySubscriberInterface<Product> {
     return Product;
   }
 
-  async afterLoad(entity: Product) {
-    const imagesFilenames = await this.getImagesFilenames(entity.id);
-    entity[this.IMAGES_FILENAMES_KEY] = imagesFilenames;
-  }
+  // async afterLoad(entity: Product) {
+  //   const imagesFilenames = await this.getImagesFilenames(entity.id);
+  //   entity[this.IMAGES_FILENAMES_KEY] = imagesFilenames;
+  // }
 
-  private readonly IMAGES_FILENAMES_KEY = 'imagesFilenames';
+  // private readonly IMAGES_FILENAMES_KEY = 'imagesFilenames';
 
-  private async getImagesFilenames(id: string) {
-    const { BASE, IMAGES } = FilePath.Products;
-    const path = join(BASE, id.toString(), IMAGES);
+  // private async getImagesFilenames(id: string) {
+  //   const { BASE, IMAGES } = FilePath.Products;
+  //   const path = join(BASE, id.toString(), IMAGES);
 
-    if (!(await pathExists(join(BASE_PATH, path)))) return;
+  //   if (!(await pathExists(join(BASE_PATH, path)))) return;
 
-    return this.storageService.getDirFilenames(path);
-  }
+  //   return this.storageService.getDirFilenames(path);
+  // }
 }

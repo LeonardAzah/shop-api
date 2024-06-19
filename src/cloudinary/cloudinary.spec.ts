@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FseService } from './fse.service';
+import { Cloudinary } from './cloudinary';
 
-describe('FseService', () => {
-  let service: FseService;
+describe('Cloudinary', () => {
+  let provider: Cloudinary;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FseService],
+      providers: [Cloudinary],
     }).compile();
 
-    service = module.get<FseService>(FseService);
+    provider = module.get<Cloudinary>(Cloudinary);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(provider).toBeDefined();
   });
 });

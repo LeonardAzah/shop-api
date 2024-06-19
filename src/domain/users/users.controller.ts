@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,7 +22,11 @@ import { Role } from '../../auth/roles/enums/roles.enum';
 import { CurrentUser } from '../../auth/decorators/currentUser.decorator';
 import { RequestUser } from '../../auth/interfaces/request-user.interface';
 import { LoginDto } from '../../auth/dtos/login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { FileSchema } from '../../files/swagger/schemas/file.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { createParseFilePipe } from '../../files/util/file-validation.util';
+import { diskStorage } from 'multer';
 
 @ApiTags('users')
 @Controller('users')
@@ -42,6 +48,17 @@ export class UsersController {
   @Patch('recover')
   recover(@Body() loginDto: LoginDto) {
     return this.usersService.recover(loginDto);
+  }
+
+  @Post('profile')
+  @ApiBody({ type: FileSchema })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadProfile(
+    @CurrentUser() user: RequestUser,
+    @UploadedFile(createParseFilePipe('2MB', 'png', 'jpeg'))
+    image: Express.Multer.File,
+  ) {
+    return this.usersService.uploadProfile(user.id, image);
   }
 
   @Roles(Role.MANAGER)

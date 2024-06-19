@@ -15,6 +15,7 @@ import { IdDto } from '../../common/dto/id.dto';
 import { PaginationDto } from '../../quering/dto/pagination.dto';
 import { Public } from '../../auth/decorators/public.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { CategoryQueryDto } from './dto/category-query.dto';
 
 @ApiTags('categories')
 @Controller('categories')
@@ -27,8 +28,8 @@ export class CategoriesController {
   }
   @Public()
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.categoriesService.findAll(paginationDto);
+  findAll(@Query() categoryQueryDto: CategoryQueryDto) {
+    return this.categoriesService.findAll(categoryQueryDto);
   }
   @Public()
   @Get(':id')

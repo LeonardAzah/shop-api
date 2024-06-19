@@ -8,6 +8,7 @@ import { DefaultPageSize } from '../../quering/util/querying.constants';
 import { OrderItemDto } from './dto/order-item.dto';
 import { Product } from '../products/entities/product.entity';
 import { OrderItem } from './entities/order-item.entity';
+import { PaginationService } from '../../quering/pagination.service';
 
 @Injectable()
 export class OrdersService {
@@ -16,6 +17,7 @@ export class OrdersService {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(OrderItem)
     private orderItemsRepository: Repository<OrderItem>,
+    private readonly paginationService: PaginationService,
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     const { items } = createOrderDto;
@@ -32,11 +34,20 @@ export class OrdersService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { limit, page: offset } = paginationDto;
-    return this.ordersRepository.find({
+    const { page } = paginationDto;
+    const limit = paginationDto.limit ?? DefaultPageSize.ORDER;
+    const offset = this.paginationService.calculateOffset(limit, page);
+
+    const [data, count] = await this.ordersRepository.findAndCount({
       skip: offset,
-      take: limit ?? DefaultPageSize.ORDER,
+      take: limit,
     });
+
+    const meta = this.paginationService.createMeta(limit, page, count);
+    return {
+      data,
+      meta,
+    };
   }
 
   async findOne(id: string) {

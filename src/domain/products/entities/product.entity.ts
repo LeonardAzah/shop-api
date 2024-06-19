@@ -21,6 +21,9 @@ export class Product {
   @Column({ nullable: true })
   description: string;
 
+  @Column('simple-array')
+  images: string[];
+
   @Column({ type: 'decimal', precision: 6, scale: 2 })
   price: number;
 

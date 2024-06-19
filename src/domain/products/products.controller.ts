@@ -12,28 +12,29 @@ import {
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { PaginationDto } from '../../quering/dto/pagination.dto';
 import { IdDto } from '../../common/dto/id.dto';
 import { productsService } from './products.service';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/roles/enums/roles.enum';
-import { ApiBody, ApiConsumes, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { createParseFilePipe } from '../../files/util/file-validation.util';
 import {
   MULTIPART_FORMDATA_KEY,
   MaxFileCount,
 } from '../../files/util/file.constants';
-import { IdFilenameDto } from '../../files/dto/id-filename.dto';
-import { FileSchema } from '../../files/swagger/schemas/file.schema';
 import { FilesSchema } from '../../files/swagger/schemas/files.schema';
 import { ProductsQueryDto } from './dto/quering/products-query.dto';
+import { CloudinaryService } from '../../cloudinary/CloudinaryService';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: productsService) {}
+  constructor(
+    private readonly productsService: productsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Roles(Role.MANAGER)
   @Post()
@@ -69,25 +70,16 @@ export class ProductsController {
   @ApiBody({ type: FilesSchema })
   @Roles(Role.MANAGER)
   @UseInterceptors(FilesInterceptor('files', MaxFileCount.PRODUCT_IMAGES))
-  @Post(':id/images')
-  uploadImages(
-    @Param() { id }: IdDto,
+  @Post('/images')
+  async uploadImages(
     @UploadedFiles(createParseFilePipe('2MB', 'png', 'jpeg'))
     files: Express.Multer.File[],
   ) {
-    return this.productsService.uploadImages(id, files);
-  }
+    const folder = process.env.CLOUDINARY_FOLDER_PRODUCTS;
 
-  @ApiOkResponse({ type: FileSchema })
-  @Public()
-  @Get(':id/images/:filename')
-  downloadImage(@Param() { id, filename }: IdFilenameDto) {
-    return this.productsService.downloadImage(id, filename);
-  }
-
-  @Roles(Role.MANAGER)
-  @Delete(':id/images/:filename')
-  deleteImage(@Param() { id, filename }: IdFilenameDto) {
-    return this.productsService.deleteImage(id, filename);
+    const result = await this.cloudinaryService.uploadFiles(files, folder);
+    const urls = [];
+    result.map((url) => urls.push(url.secure_url));
+    return urls;
   }
 }
