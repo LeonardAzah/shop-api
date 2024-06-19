@@ -8,7 +8,6 @@ import { PaymentsModule } from './domain/payments/payments.module';
 import { CategoriesModule } from './domain/categories/categories.module';
 import { ProductsModule } from './domain/products/products.module';
 import { AuthModule } from './auth/auth.module';
-// import { FilesModule } from './files/files.module';
 import { QueringModule } from './quering/quering.module';
 import { FilteringService } from './quering/filtering.service';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
@@ -25,7 +24,6 @@ import { CloudinaryService } from './cloudinary/CloudinaryService';
     CategoriesModule,
     ProductsModule,
     AuthModule,
-    // FilesModule,
     QueringModule,
     CloudinaryModule,
   ],

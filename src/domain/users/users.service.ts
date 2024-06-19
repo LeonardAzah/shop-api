@@ -122,16 +122,12 @@ export class UsersService {
   }
 
   async uploadProfile(id: string, file: Express.Multer.File) {
-    try {
-      const folder = process.env.CLOUDINARY_FOLDER_PROFILES;
+    const folder = process.env.CLOUDINARY_FOLDER_PROFILES;
 
-      const user = await this.usersRepository.findOneBy({ id });
-      const result = await this.cloudinaryService.uploadFile(file, folder);
-      user.photo = result.secure_url;
-      await this.usersRepository.save(user);
-      return user.photo;
-    } catch (error) {
-      console.log(error);
-    }
+    const user = await this.usersRepository.findOneBy({ id });
+    const result = await this.cloudinaryService.uploadFile(file, folder);
+    user.photo = result.secure_url;
+    await this.usersRepository.save(user);
+    return user.photo;
   }
 }
