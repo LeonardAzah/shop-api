@@ -12,6 +12,7 @@ import { QueringModule } from './quering/quering.module';
 import { FilteringService } from './quering/filtering.service';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryService } from './cloudinary/CloudinaryService';
+import { NotificationsGateway } from './notifications/notifications.gateway';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { CloudinaryService } from './cloudinary/CloudinaryService';
     QueringModule,
     CloudinaryModule,
   ],
-  providers: [FilteringService, CloudinaryService],
+  providers: [FilteringService, CloudinaryService, NotificationsGateway],
 })
 export class AppModule {}
