@@ -21,8 +21,6 @@ services:
       - .env
     depends_on:
       - database
-    entrypoint: ['/usr/src/app/wait-for-db.sh', 'database', 'npm', 'start']
-
   pgadmin:
     image: dpage/pgadmin4
     restart: always

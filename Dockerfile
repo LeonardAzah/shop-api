@@ -10,10 +10,6 @@ RUN npm install
 
 COPY . .
 
-COPY wait-for-db.sh /usr/src/app/
-
-RUN chmod +x /usr/src/app/wait-for-db.sh
-
 RUN npm run build
 
 EXPOSE 3000
