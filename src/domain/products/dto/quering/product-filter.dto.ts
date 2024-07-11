@@ -9,6 +9,7 @@ export class ProductFilterDto extends NameFilterDto {
   @ValidateNested()
   @ToFilterOperationDto()
   readonly price?: FilterOperationDto;
+
   @IsOptional()
   @IsString()
   readonly categotyId?: string;

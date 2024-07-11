@@ -1,12 +1,11 @@
 import { DataSource } from 'typeorm';
-import { join } from 'path';
 import * as dotenv from 'dotenv';
 import * as dotenvExpand from 'dotenv-expand';
 
 dotenvExpand.expand(dotenv.config());
 
 export default new DataSource({
-  type: 'mysql',
+  type: 'postgres',
   url: process.env.DATASOURCE_URL,
 
   entities: ['dist/domain/**/*.entity.js'],
