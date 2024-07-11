@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -18,6 +18,7 @@ export class CategoriesService {
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
     private readonly paginationService: PaginationService,
+    private readonly logger: Logger,
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     const category = await this.categoriesRepository.create(createCategoryDto);

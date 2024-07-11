@@ -6,6 +6,7 @@ import databaseConfig from './config/database.config';
 import { APP_FILTER } from '@nestjs/core';
 import { NotFoundExceptionFilter } from './exception-filters/not-found-exception/not-found-exception.filter';
 import { DatabaseExceptionFilter } from './exception-filters/database-exception/database-exception.filter';
+import { AllExceptionsFilter } from './exception-filters/http-exception-filters/http-exception-filter.filter';
 
 @Module({
   imports: [
@@ -20,6 +21,10 @@ import { DatabaseExceptionFilter } from './exception-filters/database-exception/
     {
       provide: APP_FILTER,
       useClass: DatabaseExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
   ],
 })
