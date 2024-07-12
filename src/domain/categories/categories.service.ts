@@ -14,18 +14,23 @@ import { CategoryQueryDto } from './dto/category-query.dto';
 
 @Injectable()
 export class CategoriesService {
+  private readonly logger = new Logger(CategoriesService.name);
+
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
     private readonly paginationService: PaginationService,
-    private readonly logger: Logger,
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
+    this.logger.log(`Creating a category`);
+
     const category = await this.categoriesRepository.create(createCategoryDto);
     return this.categoriesRepository.save(category);
   }
 
   async findAll(categoryQueryDto: CategoryQueryDto) {
+    this.logger.log(`Getting all category`);
+
     const { page, order, sort } = categoryQueryDto;
     const limit = categoryQueryDto.limit ?? DefaultPageSize.CATEGORY;
     const offset = this.paginationService.calculateOffset(limit, page);
@@ -36,7 +41,7 @@ export class CategoriesService {
       skip: offset,
       take: limit,
     });
-
+    this.logger.log(`Retrieved ${count} categories`);
     const meta = this.paginationService.createMeta(limit, page, count);
     return {
       data,
@@ -45,6 +50,7 @@ export class CategoriesService {
   }
 
   async findOne(id: string) {
+    this.logger.log(`Fetching category with id: ${id}`);
     return this.categoriesRepository.findOneOrFail({
       where: { id },
       relations: {
@@ -54,11 +60,14 @@ export class CategoriesService {
   }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    this.logger.log(`Updating category with id: ${id}`);
+
     const category = await this.categoriesRepository.preload({
       id,
       ...updateCategoryDto,
     });
     if (!category) {
+      this.logger.warn(`Category with Id: ${id} is not found`);
       throw new NotFoundException('Category not found');
     }
     return this.categoriesRepository.save(category);
@@ -67,6 +76,8 @@ export class CategoriesService {
   async remove(id: string) {
     const category = await this.findOne(id);
     if (category.products.length > 0) {
+      this.logger.warn(`Category with Id: ${id} has related`);
+
       throw new ConflictException('Category has related products');
     }
 

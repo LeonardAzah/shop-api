@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
@@ -12,6 +12,8 @@ import { PaginationService } from '../../quering/pagination.service';
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
+
   constructor(
     @InjectRepository(Order) private ordersRepository: Repository<Order>,
     @InjectRepository(Product) private productsRepository: Repository<Product>,
@@ -21,9 +23,9 @@ export class OrdersService {
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     const { items } = createOrderDto;
-
+    this.logger.log(`Creating order with items`);
     const itemsWithPrice = await Promise.all(
-      items.map((item) => this.creeateOrderItemWithPrice(item)),
+      items.map((item) => this.createOrderItemWithPrice(item)),
     );
 
     const order = this.ordersRepository.create({
@@ -34,6 +36,8 @@ export class OrdersService {
   }
 
   async findAll(paginationDto: PaginationDto) {
+    this.logger.log(`fetching all orders`);
+
     const { page } = paginationDto;
     const limit = paginationDto.limit ?? DefaultPageSize.ORDER;
     const offset = this.paginationService.calculateOffset(limit, page);
@@ -42,6 +46,7 @@ export class OrdersService {
       skip: offset,
       take: limit,
     });
+    this.logger.log(`Retrieved ${count} orders`);
 
     const meta = this.paginationService.createMeta(limit, page, count);
     return {
@@ -51,6 +56,7 @@ export class OrdersService {
   }
 
   async findOne(id: string) {
+    this.logger.log(`Fetching order with id: ${id}`);
     return this.ordersRepository.findOneOrFail({
       where: { id },
       relations: {
@@ -64,11 +70,12 @@ export class OrdersService {
   }
 
   async remove(id: string) {
+    this.logger.log(`Removing order with id: ${id}`);
     const order = await this.findOne(id);
     return this.ordersRepository.remove(order);
   }
 
-  private async creeateOrderItemWithPrice(orderItemDto: OrderItemDto) {
+  private async createOrderItemWithPrice(orderItemDto: OrderItemDto) {
     const { id } = orderItemDto.product;
 
     const product = await this.productsRepository.findOneBy({ id });

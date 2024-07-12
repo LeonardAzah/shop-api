@@ -9,6 +9,7 @@ import {
   Patch,
   Param,
   Body,
+  Logger,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
@@ -28,7 +29,10 @@ import { JwtCokieHeader } from './swagger/jwt-cookie.header';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: Logger,
+  ) {}
 
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({
@@ -42,21 +46,26 @@ export class AuthController {
     @CurrentUser() user: RequestUser,
     @Res({ passthrough: true }) response: Response,
   ) {
+    this.logger.log(`Handling login of user: ${user}`);
     const token = this.authService.login(user);
+
     response.cookie('token', token, {
       secure: true,
       httpOnly: true,
       sameSite: true,
     });
   }
+
   @Get('profile')
   getProfile(@CurrentUser() { id }: RequestUser) {
+    this.logger.log(`Handling get user with Id: ${id}`);
     return this.authService.getProfile(id);
   }
 
   @Roles(Role.ADMIN)
   @Patch(':id/assign-role')
   assignRole(@Param() { id }: IdDto, @Body() { role }: RoleDto) {
+    this.logger.log(`Handling assigning user ith Id: ${id} the role:${role}`);
     return this.authService.assignRole(id, role);
   }
 }

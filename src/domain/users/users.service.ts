@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -21,6 +22,8 @@ import { PaginationService } from '../../quering/pagination.service';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
@@ -30,11 +33,14 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
+    this.logger.log(`Creating a user`);
     const user = this.usersRepository.create(createUserDto);
     return this.usersRepository.save(user);
   }
 
   async findAll(paginationDto: PaginationDto) {
+    this.logger.log(`Getting all users`);
+
     const { page } = paginationDto;
     const limit = paginationDto.limit ?? DefaultPageSize.USER;
     const offset = this.paginationService.calculateOffset(limit, page);
@@ -43,6 +49,9 @@ export class UsersService {
       skip: offset,
       take: limit,
     });
+
+    this.logger.log(`Retrieved ${count} users`);
+
     const meta = this.paginationService.createMeta(limit, page, count);
     return {
       data,
@@ -51,6 +60,8 @@ export class UsersService {
   }
 
   async findOne(id: string) {
+    this.logger.log(`Fetching user with id: ${id}`);
+
     return this.usersRepository.findOneOrFail({
       where: { id },
       relations: {
@@ -68,11 +79,15 @@ export class UsersService {
     currentUser: RequestUser,
   ) {
     compareUserId(currentUser, id);
+
+    this.logger.log(`Updating user with id: ${id}`);
+
     const user = await this.usersRepository.preload({
       id,
       ...updateUserDto,
     });
     if (!user) {
+      this.logger.warn(`User with Id: ${id} is not found`);
       throw new NotFoundException('User not found');
     }
     return this.usersRepository.save(user);
@@ -81,6 +96,7 @@ export class UsersService {
   async remove(id: string, soft: boolean, currentUser: RequestUser) {
     compareUserId(currentUser, id);
     if (!soft) {
+      this.logger.warn(`User with Id: ${id} can not access this resource`);
       throw new ForbiddenException('Forbidden resource');
     }
 
@@ -92,6 +108,7 @@ export class UsersService {
   }
 
   async recover(loginDto: LoginDto) {
+    this.logger.warn(`Recovering deleted account`);
     const { email, password } = loginDto;
     const user = await this.usersRepository.findOne({
       where: { email },

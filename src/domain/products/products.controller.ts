@@ -13,7 +13,7 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IdDto } from '../../common/dto/id.dto';
-import { productsService } from './products.service';
+import { ProductsService } from './products.service';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/roles/enums/roles.enum';
@@ -32,7 +32,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 @Controller('products')
 export class ProductsController {
   constructor(
-    private readonly productsService: productsService,
+    private readonly productsService: ProductsService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
