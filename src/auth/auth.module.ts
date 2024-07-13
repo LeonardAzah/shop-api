@@ -17,6 +17,7 @@ import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from './guards/roles/roles.guard';
 import { Throttle, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { THROTTLER_MODULE_OPTIONS } from './util/auth.constants';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { THROTTLER_MODULE_OPTIONS } from './util/auth.constants';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ThrottlerModule.forRoot(THROTTLER_MODULE_OPTIONS),
+    CommonModule,
   ],
   controllers: [AuthController],
   providers: [

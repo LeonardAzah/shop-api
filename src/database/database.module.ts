@@ -7,11 +7,13 @@ import { APP_FILTER } from '@nestjs/core';
 import { NotFoundExceptionFilter } from './exception-filters/not-found-exception/not-found-exception.filter';
 import { DatabaseExceptionFilter } from './exception-filters/database-exception/database-exception.filter';
 import { AllExceptionsFilter } from './exception-filters/http-exception-filters/http-exception-filter.filter';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync(databaseConfig.asProvider()),
     SeedingModule,
+    CommonModule,
   ],
   providers: [
     {

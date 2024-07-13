@@ -7,6 +7,7 @@ import { AuthModule } from '../../auth/auth.module';
 import { UsersSubscriber } from './subscribers/users.subscribers';
 import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
 import { QueringModule } from '../../quering/quering.module';
+import { CommonModule } from '../../common/common.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { QueringModule } from '../../quering/quering.module';
     AuthModule,
     CloudinaryModule,
     QueringModule,
+    CommonModule,
   ],
   controllers: [UsersController],
   providers: [UsersService, UsersSubscriber],

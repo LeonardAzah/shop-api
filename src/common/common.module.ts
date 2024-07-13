@@ -10,6 +10,7 @@ import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { VALIDATION_PIPE_OPTIONS } from './util/common.constants';
 import { CustomLogger } from './custom-logger.service';
 import { LoggerMiddleware } from './logger.middleware';
+import { ResponseInterceptor } from './response.interceptor';
 
 @Module({
   providers: [
@@ -24,6 +25,10 @@ import { LoggerMiddleware } from './logger.middleware';
     {
       provide: Logger,
       useClass: CustomLogger,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
   ],
   exports: [Logger],

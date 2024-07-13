@@ -12,7 +12,7 @@ import { RequestUser } from './interfaces/request-user.interface';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { Role } from './roles/enums/roles.enum';
-import { error } from 'console';
+import { CustomLogger } from '../common/custom-logger.service';
 
 @Injectable()
 export class AuthService {

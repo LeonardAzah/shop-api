@@ -5,7 +5,7 @@ import * as dotenvExpand from 'dotenv-expand';
 dotenvExpand.expand(dotenv.config());
 
 export default new DataSource({
-  type: 'postgres',
+  type: 'mysql',
   url: process.env.DATASOURCE_URL,
 
   entities: ['dist/domain/**/*.entity.js'],
