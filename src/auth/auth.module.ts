@@ -9,7 +9,6 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strateges/local.strategy';
 import { LoginValidationMiddleware } from './middleware/login-validation/login-validation.middleware';
 import { JwtModule } from '@nestjs/jwt';
-import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './strateges/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
@@ -18,13 +17,15 @@ import { RolesGuard } from './guards/roles/roles.guard';
 import { Throttle, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { THROTTLER_MODULE_OPTIONS } from './util/auth.constants';
 import { CommonModule } from '../common/common.module';
+import { GoogleStrategy } from './strateges/google.strategy';
+import { RefreshJwtStrategy } from './strateges/refresh-token.strategy';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
-    JwtModule.registerAsync(jwtConfig.asProvider()),
-    ConfigModule.forFeature(jwtConfig),
+    JwtModule.register({}),
+    ConfigModule,
     ThrottlerModule.forRoot(THROTTLER_MODULE_OPTIONS),
     CommonModule,
   ],
@@ -34,6 +35,8 @@ import { CommonModule } from '../common/common.module';
     { provide: HashingService, useClass: BcryptService },
     LocalStrategy,
     JwtStrategy,
+    RefreshJwtStrategy,
+    GoogleStrategy,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

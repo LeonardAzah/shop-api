@@ -26,7 +26,7 @@ export class Order {
   @Column(() => RegistryDates, { prefix: false })
   registryDates: RegistryDates;
 
-  @ManyToOne(() => User, (user) => user.orders)
+  @ManyToOne(() => User, (user) => user.orders, { nullable: false })
   customer: User;
   @OneToOne(() => Payment, (payment) => payment.order, { cascade: true })
   payment: Payment;

@@ -3,6 +3,7 @@ import { RegistryDates } from '../../../common/embedded/registry-dates.embedded'
 import { Order } from '../../orders/entities/order.entity';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../../auth/roles/enums/roles.enum';
+import { Rating } from '../../ratings/entities/rating.entity';
 
 @Entity()
 export class User {
@@ -15,16 +16,21 @@ export class User {
   @Column({ nullable: true })
   photo: string;
 
+  @Column({ nullable: true })
+  provider: string;
+
   @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true })
-  phone: string;
+  @Column({ nullable: true })
+  phone?: string;
 
   @Exclude()
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  password?: string;
 
+  @Column({ nullable: true })
+  refreshToken: string;
   @Column({
     type: 'enum',
     enum: Role,
@@ -35,6 +41,9 @@ export class User {
 
   @Column(() => RegistryDates, { prefix: false })
   registryDates: RegistryDates;
+
+  @OneToMany(() => Rating, (rating) => rating.user)
+  ratings: Rating[];
 
   @OneToMany(() => Order, (order) => order.customer, {
     cascade: ['soft-remove', 'recover'],

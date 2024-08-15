@@ -7,10 +7,11 @@ import { ProductsSubscriber } from './subscribers/product.subscriber';
 import { QueringModule } from '../../quering/quering.module';
 import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
 import { CommonModule } from '../../common/common.module';
+import { Rating } from '../ratings/entities/rating.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product]),
+    TypeOrmModule.forFeature([Product, Rating]),
     QueringModule,
     CloudinaryModule,
     CommonModule,

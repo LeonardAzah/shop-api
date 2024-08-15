@@ -58,6 +58,7 @@ export class ProductsService {
       where: { id },
       relations: {
         categories: true,
+        ratings: true,
       },
     });
   }

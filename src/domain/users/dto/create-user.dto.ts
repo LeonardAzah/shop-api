@@ -1,6 +1,6 @@
 import {
   IsEmail,
-  IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   Length,
@@ -28,4 +28,8 @@ export class CreateUserDto {
    */
   @IsPassword()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  photo?: string;
 }

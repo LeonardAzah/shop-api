@@ -8,10 +8,11 @@ import { UsersSubscriber } from './subscribers/users.subscribers';
 import { CloudinaryModule } from '../../cloudinary/cloudinary.module';
 import { QueringModule } from '../../quering/quering.module';
 import { CommonModule } from '../../common/common.module';
+import { Rating } from '../ratings/entities/rating.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Rating]),
     AuthModule,
     CloudinaryModule,
     QueringModule,

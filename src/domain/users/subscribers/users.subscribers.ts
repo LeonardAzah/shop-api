@@ -17,13 +17,15 @@ export class UsersSubscriber implements EntitySubscriberInterface<User> {
     dataSource.subscribers.push(this);
   }
 
-  listenTo(): string | Function {
+  listenTo() {
     return User;
   }
 
   async beforeInsert(event: InsertEvent<User>) {
     const { entity: user } = event;
-    user.password = await this.hashingService.hash(user.password);
+    if (user.password) {
+      user.password = await this.hashingService.hash(user.password);
+    }
   }
 
   async beforeUpdate(event: UpdateEvent<User>) {

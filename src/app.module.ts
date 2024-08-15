@@ -13,6 +13,7 @@ import { FilteringService } from './quering/filtering.service';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CloudinaryService } from './cloudinary/CloudinaryService';
 import { NotificationsGateway } from './notifications/notifications.gateway';
+import { RatingsModule } from './domain/ratings/ratings.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { NotificationsGateway } from './notifications/notifications.gateway';
     AuthModule,
     QueringModule,
     CloudinaryModule,
+    RatingsModule,
   ],
   providers: [FilteringService, CloudinaryService, NotificationsGateway],
 })

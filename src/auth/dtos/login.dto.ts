@@ -3,8 +3,8 @@ import { IsPassword } from '../../common/decorators/validators/is-password.decor
 
 export class LoginDto {
   @IsEmail()
-  email: string;
+  readonly email: string;
 
   @IsPassword()
-  password: string;
+  readonly password: string;
 }
