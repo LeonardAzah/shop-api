@@ -33,6 +33,7 @@ export class Order {
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];
+
   @Expose()
   get total() {
     return this.items?.reduce((acc, current) => acc + current.subTotal, 0);

@@ -15,29 +15,25 @@ import { CurrentUser } from '../../auth/decorators/currentUser.decorator';
 import { RequestUser } from '../../auth/interfaces/request-user.interface';
 import { IdDto } from '../../common/dto/id.dto';
 import { PaginationDto } from '../../quering/dto/pagination.dto';
-import { Public } from '../../auth/decorators/public.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('ratings')
 @Controller('ratings')
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
-  @Post()
+  @Post(':id')
   create(
+    @Param() { id }: IdDto,
     @Body() createRatingDto: CreateRatingDto,
     @CurrentUser() user: RequestUser,
   ) {
-    console.log('Rating controler....');
-    return this.ratingsService.create(createRatingDto, user);
-  }
-
-  @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.ratingsService.findAll(paginationDto);
+    return this.ratingsService.create(id, createRatingDto, user.id);
   }
 
   @Get(':id')
-  findOne(@Param() { id }: IdDto) {
-    return this.ratingsService.findOne(id);
+  findAll(@Param() { id }: IdDto, @Query() paginationDto: PaginationDto) {
+    return this.ratingsService.getProductRatings(id, paginationDto);
   }
 
   @Patch(':id')
